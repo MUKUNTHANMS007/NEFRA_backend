@@ -19,6 +19,5 @@ public class SuccessStory {
     private String author;
     private String company;
     private String imageUrl;
-
-    private boolean featured = true; // This is the key for getFeaturedStories()
+    private boolean featured = true;
 }

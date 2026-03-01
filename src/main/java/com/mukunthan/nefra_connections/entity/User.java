@@ -14,10 +14,24 @@ public class User {
     private Long id;
 
     private String name;
-    private String email; // FIX: Add this line to match the Repository method
-    private String role;
+
+    @Column(unique = true, nullable = false)
+    private String email;
+
+    @Column(nullable = false)
+    private String password;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
     private String company;
     private String industry;
     private String imageUrl;
     private boolean verified;
+
+    public enum Role {
+        ENTREPRENEUR,
+        INVESTOR,
+        ADMIN
+    }
 }
