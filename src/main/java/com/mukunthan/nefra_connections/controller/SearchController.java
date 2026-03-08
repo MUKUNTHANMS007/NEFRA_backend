@@ -21,15 +21,19 @@ public class SearchController {
 
     @GetMapping("/users")
     public ResponseEntity<List<UserDTO>> searchUsers(
-            @RequestParam UserRole role,
+            @RequestParam(required = false) UserRole role, // THE FIX: Make role optional
             @RequestParam(required = false) DomainType domain) {
 
         List<com.mukunthan.nefra_connections.entity.User> users;
 
-        if (domain != null) {
+        // THE FIX: Smart routing based on what the frontend actually asks for
+        if (role != null && domain != null) {
             users = userRepository.findByRoleAndDomainType(role, domain);
-        } else {
+        } else if (role != null) {
             users = userRepository.findByRole(role);
+        } else {
+            // If the frontend asks for everyone, give them everyone
+            users = userRepository.findAll();
         }
 
         List<UserDTO> response = users.stream()

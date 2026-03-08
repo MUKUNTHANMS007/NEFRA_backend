@@ -35,6 +35,7 @@ public class User {
     private String description;
 
     @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "VARCHAR(255)") // THE FIX: Forces Hibernate to accept the generic string column
     private UserRole role;
 
     @Enumerated(EnumType.STRING)

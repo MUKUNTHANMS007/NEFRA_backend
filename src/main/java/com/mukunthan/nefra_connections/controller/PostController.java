@@ -25,12 +25,25 @@ public class PostController {
         return ResponseEntity.ok(postService.getHomeFeed());
     }
 
+    // THE FIX: Exposing the user's specific posts to the frontend
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<PostResponseDTO>> getUserPosts(@PathVariable Long userId) {
+        return ResponseEntity.ok(postService.getUserPosts(userId));
+    }
+
     @PostMapping("/{postId}/like")
     public ResponseEntity<String> toggleLike(
             @PathVariable Long postId,
             @RequestParam Long userId) {
         postService.toggleLike(postId, userId);
         return ResponseEntity.ok("Like toggled successfully");
+    }
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<String> deletePost(
+            @PathVariable Long postId,
+            @RequestParam Long userId) {
+        postService.deletePost(postId, userId);
+        return ResponseEntity.ok("Post deleted successfully");
     }
 
     @PostMapping("/{postId}/comments")

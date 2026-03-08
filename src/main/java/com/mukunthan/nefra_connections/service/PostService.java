@@ -25,8 +25,18 @@ public class PostService {
 
         Post post = new Post();
         post.setUser(user);
-        post.setTitle(request.title());
+
+        String finalTitle = (request.title() != null && !request.title().isBlank())
+                ? request.title()
+                : "Update from " + user.getFullName();
+        post.setTitle(finalTitle);
+
+        if (request.description() == null || request.description().trim().isEmpty()) {
+            throw new RuntimeException("Post description/content cannot be empty");
+        }
         post.setDescription(request.description());
+
+        // This will capture the image URL sent from the frontend
         post.setImageUrl(request.imageUrl());
 
         Post savedPost = postRepository.save(post);
@@ -40,6 +50,17 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
+    // THE FIX: New method for the Profile page
+    @Transactional(readOnly = true)
+    public List<PostResponseDTO> getUserPosts(Long userId) {
+        // We verify the user exists first
+        userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+
+        return postRepository.findByUserIdOrderByCreatedAtDesc(userId).stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+
     @Transactional
     public void toggleLike(Long postId, Long userId) {
         Post post = postRepository.findById(postId)
@@ -48,14 +69,26 @@ public class PostService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         postLikeRepository.findByPostIdAndUserId(postId, userId).ifPresentOrElse(
-                postLikeRepository::delete, // If it exists, unlike it
-                () -> { // If it doesn't exist, like it
+                postLikeRepository::delete,
+                () -> {
                     PostLike like = new PostLike();
                     like.setPost(post);
                     like.setUser(user);
                     postLikeRepository.save(like);
                 }
         );
+    }
+    @Transactional
+    public void deletePost(Long postId, Long userId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        // Security check: Only the author can delete their post
+        if (!post.getUser().getId().equals(userId)) {
+            throw new RuntimeException("Unauthorized: You can only delete your own posts");
+        }
+
+        postRepository.delete(post);
     }
 
     @Transactional
