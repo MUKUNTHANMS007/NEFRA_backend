@@ -14,14 +14,17 @@ public class ProfileController {
 
     private final ProfileService profileService;
 
+    // COMBINED GET: Use the DTO for both internal and public profile views
     @GetMapping("/{userId}")
     public ResponseEntity<ProfileResponseDTO> getProfile(@PathVariable Long userId) {
         return ResponseEntity.ok(profileService.getUserProfile(userId));
     }
+
+    // UPDATE: Standard PutMapping for editing profiles
     @PutMapping("/{userId}")
-    public org.springframework.http.ResponseEntity<com.mukunthan.nefra_connections.dto.ProfileResponseDTO> updateProfile(
+    public ResponseEntity<ProfileResponseDTO> updateProfile(
             @PathVariable Long userId,
-            @RequestBody com.mukunthan.nefra_connections.dto.ProfileResponseDTO updateData) {
-        return org.springframework.http.ResponseEntity.ok(profileService.updateProfile(userId, updateData));
+            @RequestBody ProfileResponseDTO updateData) {
+        return ResponseEntity.ok(profileService.updateProfile(userId, updateData));
     }
 }

@@ -4,7 +4,6 @@ import com.mukunthan.nefra_connections.enums.UserRole;
 import com.mukunthan.nefra_connections.enums.DomainType;
 import jakarta.persistence.*;
 import lombok.*;
-
 @Entity
 @Table(name = "users")
 @Data
@@ -23,11 +22,14 @@ public class User {
     @Column(nullable = false)
     private String email;
 
-    // Hibernate maps camelCase 'passwordHash' to snake_case 'password_hash' in MySQL
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 
     private String fullName;
+
+    // NEW: The professional headline (e.g., "SaaS Founder | Tech Enthusiast")
+    private String headline;
+
     private String location;
     private String profileImageUrl;
 
@@ -35,9 +37,30 @@ public class User {
     private String description;
 
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "VARCHAR(255)") // THE FIX: Forces Hibernate to accept the generic string column
+    @Column(name = "role", columnDefinition = "VARCHAR(255)")
     private UserRole role;
 
     @Enumerated(EnumType.STRING)
     private DomainType domainType;
+
+    // NEW FIELDS TO MATCH YOUR RECENT ALTER TABLE COMMANDS
+    private String industry;
+
+    @Builder.Default
+    private Integer foundedYear = 2026;
+
+    @Builder.Default
+    private Integer connectionCount = 0;
+
+    @Builder.Default
+    private Integer postCount = 0;
+
+    @Builder.Default
+    private boolean isVerified = false;
+
+    private String linkedinUrl;
+    private String githubUrl;
+
+    @Column(precision = 15, scale = 2)
+    private java.math.BigDecimal totalAssets;
 }
