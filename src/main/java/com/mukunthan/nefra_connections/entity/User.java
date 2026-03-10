@@ -55,8 +55,8 @@ public class User {
     @Builder.Default
     private Integer postCount = 0;
 
-    @Builder.Default
-    private boolean isVerified = false;
+    @Column(name = "is_verified")
+    private Boolean isVerified = false;
 
     private String linkedinUrl;
     private String githubUrl;

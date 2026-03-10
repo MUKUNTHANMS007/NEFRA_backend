@@ -14,13 +14,14 @@ public class ProfileController {
 
     private final ProfileService profileService;
 
-    // COMBINED GET: Use the DTO for both internal and public profile views
+    // Notice the new request parameter: ?viewerId=X
     @GetMapping("/{userId}")
-    public ResponseEntity<ProfileResponseDTO> getProfile(@PathVariable Long userId) {
-        return ResponseEntity.ok(profileService.getUserProfile(userId));
+    public ResponseEntity<ProfileResponseDTO> getProfile(
+            @PathVariable Long userId,
+            @RequestParam(required = false) Long viewerId) {
+        return ResponseEntity.ok(profileService.getUserProfile(userId, viewerId));
     }
 
-    // UPDATE: Standard PutMapping for editing profiles
     @PutMapping("/{userId}")
     public ResponseEntity<ProfileResponseDTO> updateProfile(
             @PathVariable Long userId,

@@ -1,7 +1,5 @@
 package com.mukunthan.nefra_connections.controller;
 
-import com.mukunthan.nefra_connections.dto.ConnectionRequestDTO;
-import com.mukunthan.nefra_connections.dto.ConnectionResponseDTO;
 import com.mukunthan.nefra_connections.service.ConnectionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +14,27 @@ public class ConnectionController {
     private final ConnectionService connectionService;
 
     @PostMapping("/request")
-    public ResponseEntity<ConnectionResponseDTO> requestConnection(@RequestBody ConnectionRequestDTO request) {
-        ConnectionResponseDTO response = connectionService.initiateConnection(request);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<String> requestConnection(
+            @RequestParam Long senderId,
+            @RequestParam Long recipientId) {
+        try {
+            String result = connectionService.sendConnectionRequest(senderId, recipientId);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/respond")
+    public ResponseEntity<String> respondToConnection(
+            @RequestParam Long senderId,
+            @RequestParam Long recipientId,
+            @RequestParam String action) {
+        try {
+            String result = connectionService.respondToRequest(senderId, recipientId, action);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }

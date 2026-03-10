@@ -5,6 +5,7 @@ import com.mukunthan.nefra_connections.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -25,7 +26,6 @@ public class PostController {
         return ResponseEntity.ok(postService.getHomeFeed());
     }
 
-    // THE FIX: Exposing the user's specific posts to the frontend
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<PostResponseDTO>> getUserPosts(@PathVariable Long userId) {
         return ResponseEntity.ok(postService.getUserPosts(userId));
@@ -38,12 +38,19 @@ public class PostController {
         postService.toggleLike(postId, userId);
         return ResponseEntity.ok("Like toggled successfully");
     }
+
     @DeleteMapping("/{postId}")
     public ResponseEntity<String> deletePost(
             @PathVariable Long postId,
             @RequestParam Long userId) {
         postService.deletePost(postId, userId);
         return ResponseEntity.ok("Post deleted successfully");
+    }
+
+    // THE FIX: Calling the Service instead of the Repository directly, returning DTOs!
+    @GetMapping("/feed/{userId}")
+    public ResponseEntity<List<PostResponseDTO>> getPersonalizedFeed(@PathVariable Long userId) {
+        return ResponseEntity.ok(postService.getPersonalizedFeed(userId));
     }
 
     @PostMapping("/{postId}/comments")

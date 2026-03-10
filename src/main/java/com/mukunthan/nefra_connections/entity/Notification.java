@@ -1,5 +1,6 @@
 package com.mukunthan.nefra_connections.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore; // Add this import
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,9 +20,11 @@ public class Notification {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // THE FIX: Tell the JSON serializer to skip this lazy-loaded proxy
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private User user; // The recipient of the notification
+    private User user;
 
     @Column(nullable = false)
     private String message;

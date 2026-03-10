@@ -61,6 +61,18 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
+    // THE FIX: Personalized Feed for Connected Users
+    @Transactional(readOnly = true)
+    public List<PostResponseDTO> getPersonalizedFeed(Long userId) {
+        // 1. Fetch the raw entities using the smart SQL query we added to the repository
+        List<Post> feedPosts = postRepository.findPostsForUserFeed(userId);
+
+        // 2. Convert them to DTOs using your exact mapping method
+        return feedPosts.stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+
     @Transactional
     public void toggleLike(Long postId, Long userId) {
         Post post = postRepository.findById(postId)
@@ -78,6 +90,7 @@ public class PostService {
                 }
         );
     }
+
     @Transactional
     public void deletePost(Long postId, Long userId) {
         Post post = postRepository.findById(postId)
