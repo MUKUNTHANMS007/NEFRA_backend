@@ -6,10 +6,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
+// THE FIX: This path must exactly match what React is calling in your screenshot
 @RequestMapping("/api/v1/settings")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "*") // Wildcard allows your frontend to connect regardless of the port
 public class SettingsController {
 
     private final SettingsService settingsService;
@@ -20,10 +23,11 @@ public class SettingsController {
     }
 
     @PutMapping("/{userId}")
-    public ResponseEntity<String> updateSettings(
+    public ResponseEntity<Map<String, String>> updateSettings(
             @PathVariable Long userId,
             @RequestBody SettingsUpdateDTO request) {
+
         settingsService.updateSettings(userId, request);
-        return ResponseEntity.ok("Settings updated successfully");
+        return ResponseEntity.ok(Map.of("message", "System configuration synced successfully"));
     }
 }
